@@ -7,6 +7,8 @@
 
 ## Prácticas/Ejemplos
     * SOLID
+    * Dagger
+    * Mockito
 - 
 
 
