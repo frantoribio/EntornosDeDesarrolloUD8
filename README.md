@@ -1,6 +1,6 @@
 
 --- 
-# Unidad 8 - Diseño Orientado a Objetos: Diagramas de Clases
+# Unidad 8 - Arquitectura y Patrones de Diseño
 <img src=daniimg.png>
 
 
