@@ -4,6 +4,8 @@ package es.joseluisgs.dam.controllers;
 import es.joseluisgs.dam.errors.PersonaException;
 import es.joseluisgs.dam.models.Persona;
 import es.joseluisgs.dam.repositories.PersonasRespositoryImpl;
+import es.joseluisgs.dam.services.PersonasStorageImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -30,10 +32,14 @@ import static org.mockito.Mockito.*;
 class PersonasControllerTest {
     @Mock
     PersonasRespositoryImpl personasRespository = new PersonasRespositoryImpl();
+    PersonasStorageImpl personasStorageTest = new PersonasStorageImpl();
+
     @InjectMocks
-    PersonasController personasController = new PersonasController(new PersonasRespositoryImpl());
+    PersonasController personasController = new PersonasController(new PersonasRespositoryImpl(), new PersonasStorageImpl());
 
     Persona personaTest = new Persona("Dani", 19);
+    Persona storageTest1 = new Persona("Daniel", 20);
+    Persona storageTest2 = new Persona("Danielito", 21);
 
     @Test
     void getPersonas() {
@@ -99,12 +105,26 @@ class PersonasControllerTest {
 
     @Test
     void restoreData() {
-        when(personasRespository.getAll()).thenReturn(List.of(personaTest));
-        var resultado = personasController.getPersonas();
+        when(personasStorageTest.restore()).thenReturn(List.of(storageTest1, storageTest2));
+        var resultado = personasController.restoreData();
         assertAll(
-                ()-> assertEquals(1,resultado.size()),
-                ()-> assertEquals(personaTest, resultado.get(0))
+                ()-> assertEquals(resultado.size(), 2),
+                ()-> assertEquals(resultado.get(0).getId(), storageTest1.getId()),
+                ()-> assertEquals(resultado.get(1).getId(), storageTest2.getId())
         );
-        verify(personasRespository, times(1)).getAll();
+        verify(personasStorageTest, times(1)).restore();
+    }
+
+    @Test
+    void updatePersona() {
+        when(personasRespository.update(any(Persona.class))).thenReturn(personaTest);
+        var resultado = personasController.updatePersona(personaTest);
+        assertAll(
+                ()-> assertEquals(personaTest, resultado),
+                ()-> assertEquals(personaTest.getId(), resultado.getId()),
+                ()-> assertEquals(personaTest.getEdad(), resultado.getEdad())
+        );
+
+        verify(personasRespository, times(1)).update(any(Persona.class));
     }
 }

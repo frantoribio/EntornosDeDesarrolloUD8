@@ -5,6 +5,7 @@ import es.joseluisgs.dam.errors.PersonaException;
 import es.joseluisgs.dam.models.Persona;
 import es.joseluisgs.dam.repositories.PersonasRepository;
 import es.joseluisgs.dam.repositories.PersonasRespositoryImpl;
+import es.joseluisgs.dam.services.PersonasStorageImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class Main {
 
     private static void manual() {
         // Creamos el controlador, debes modificarlo para trabajar correctamente con las dependencias
-        PersonasController personasController = new PersonasController(new PersonasRespositoryImpl());
+        PersonasController personasController = new PersonasController(new PersonasRespositoryImpl(), new PersonasStorageImpl());
 
         // Recuperamos los datos
         System.out.println("Recuperando datos");

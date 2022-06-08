@@ -16,10 +16,13 @@ import java.util.UUID;
  */
 public class PersonasController {
 PersonasRepository personasRepository;
-public PersonasController(PersonasRepository personasRepository){
+
+PersonasStorage personasStorage;
+
+public PersonasController(PersonasRepository personasRepository, PersonasStorage personasStorage) {
     this.personasRepository = personasRepository;
+    this.personasStorage = personasStorage;
 }
- private final PersonasStorage personasStorage = new PersonasStorageImpl();
 
     public List<Persona> getPersonas() {
         return personasRepository.getAll();

@@ -62,4 +62,16 @@ public class PersonasRepositoryImplTest {
         var result = personasRepository.delete(personaTest.getId());
         assertFalse(result.isPresent());
     }
+
+    @Test
+    void updatePersona(){
+        personasRepository.save(personaTest);
+        personaTest.setEdad(21);
+        var resultado = personasRepository.update(personaTest);
+        System.out.println(personaTest);
+        assertAll(
+                ()-> assertEquals(personaTest.getEdad(), resultado.getEdad()),
+                ()-> assertEquals(personaTest.getNombre(), resultado.getNombre())
+        );
+    }
 }
