@@ -4,6 +4,7 @@ import es.dam.errors.PersonaException;
 import es.dam.models.Persona;
 import es.dam.repositories.PersonasRepository;
 import es.dam.repositories.PersonasRespositoryImpl;
+import es.dam.services.PersonasStorage;
 import es.dam.services.PersonasStorageImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -26,14 +28,21 @@ import static org.mockito.Mockito.*;
 @Isolated
 class PersonasControllerTest {
     @Mock
-    PersonasRespositoryImpl personasRepository = new PersonasRespositoryImpl();
-    PersonasStorageImpl personasStorageTest = new PersonasStorageImpl();
+    private PersonasRepository personasRepository;
+    @Mock
+    private PersonasStorage personasStorageTest;
     @InjectMocks
-            PersonasController personasController = new PersonasController(new PersonasRespositoryImpl(), new PersonasStorageImpl());
+    PersonasController personasController;
 
     Persona personaTest = new Persona("Dani", 19, "54034501A");
     Persona storageTest1 = new Persona("Daniel", 20, "54034501A");
     Persona storageTest2 = new Persona("Danielito", 21, "54034501A");
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        personasController = new PersonasController(personasRepository, personasStorageTest);
+    }
 
     // Crear todos los métodos necesarios de test para testar los casos correctos o incorrectos de
     // checkData()
@@ -135,7 +144,8 @@ class PersonasControllerTest {
 
     @Test
     void restoreData() {
-        when(personasStorageTest.restore()).thenReturn(List.of(storageTest1, storageTest2));
+        var lista = List.of(storageTest1, storageTest2);
+        when(personasStorageTest.restore()).thenReturn(lista);
         var resultado = personasController.restoreData();
         assertAll(
                 ()-> assertEquals(resultado.size(), 2),
