@@ -1,9 +1,7 @@
 package es.dam.repositories;
 
-import es.dam.controllers.PersonasController;
 import es.dam.errors.PersonaException;
 import es.dam.models.Persona;
-import es.dam.services.PersonasStorageImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +24,6 @@ class PersonasRespositoryImplTest {
                 ()-> assertEquals(1, resultado.size()),
                 ()-> assertEquals(personaTest.getId(), resultado.get(0).getId()),
                 ()-> assertEquals(personaTest.getDni(), resultado.get(0).getDni())
-
-
         );
     }
 
@@ -79,13 +75,13 @@ class PersonasRespositoryImplTest {
         personasRepository.save(personaTest);
         personasRepository.delete(personaTest);
         var res = personasRepository.getById(personaTest.getId());
-
         assertTrue(res.isEmpty());
-
     }
 
     @Test
     void deleteNoExiste() {
+        var res = personasRepository.delete(personaTest.getId());
+        assertFalse(res.isPresent());
     }
 
     @Test

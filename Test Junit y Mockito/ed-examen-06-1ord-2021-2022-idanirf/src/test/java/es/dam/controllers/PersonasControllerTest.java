@@ -34,9 +34,9 @@ class PersonasControllerTest {
     @InjectMocks
     PersonasController personasController;
 
-    Persona personaTest = new Persona("Dani", 19, "54034501A");
-    Persona storageTest1 = new Persona("Daniel", 20, "54034501A");
-    Persona storageTest2 = new Persona("Danielito", 21, "54034501A");
+    Persona personaTest = new Persona("Dani", 19, "50000001A");
+    Persona storageTest1 = new Persona("Daniel", 20, "50000001A");
+    Persona storageTest2 = new Persona("Danielito", 21, "50000001A");
 
     @BeforeEach
     void setUp() {
@@ -46,6 +46,35 @@ class PersonasControllerTest {
 
     // Crear todos los métodos necesarios de test para testar los casos correctos o incorrectos de
     // checkData()
+    @Test
+    void checkDni(){
+        var regDNI = personaTest.getDni().matches("^\\d{8}[A-Z]$");
+        var regEmpty= personaTest.getDni() == null || personaTest.getDni().isEmpty();
+        assertAll(
+                ()-> assertTrue(regDNI,personaTest.getDni()),
+                ()->assertFalse(regEmpty,personaTest.getDni())
+        );
+    }
+
+    @Test
+    void checkNombre(){
+        var regNombreCorrecto = personaTest.getNombre() != null;
+        var regNombreIncorrecto = personaTest.getNombre() == null || personaTest.getNombre().isEmpty();
+        assertAll(
+                ()->assertTrue(regNombreCorrecto,personaTest.getNombre()),
+                ()->assertFalse(regNombreIncorrecto,personaTest.getNombre())
+        );
+    }
+
+    @Test
+    void checkEdad(){
+        var regEdadCorrecto=personaTest.getEdad()>=1 && personaTest.getEdad()<=100;
+        var regEdadIncorrecto=personaTest.getEdad() < 1 || personaTest.getEdad() > 100;
+        assertAll(
+                ()->assertFalse(regEdadIncorrecto,String.valueOf(personaTest.getEdad())),
+                ()->assertTrue(regEdadCorrecto,String.valueOf(personaTest.getEdad()))
+        );
+    }
 
     @Test
     void getPersonas() throws PersonaException {
@@ -135,11 +164,10 @@ class PersonasControllerTest {
     @Test
     void updatePersonaNoExiste() throws PersonaException {
         doThrow(new PersonaException("Persona no encontrada con id: " + personaTest.getId())).when(personasRepository).update(personaTest);
-        var result1 = assertThrows(PersonaException.class,() -> personasController.updatePersona(personaTest));
-        Assertions.assertAll(
-                ()-> assertEquals(result1.getMessage(),"Persona no encontrada con id: " + personaTest .getId())
-        );
-        verify(personasRepository, times(1)).delete(personaTest);
+        var resultado = assertThrows(PersonaException.class,() -> personasController.updatePersona(personaTest));
+        assertEquals(resultado.getMessage(),"Persona no encontrada con id: " + personaTest .getId());
+
+        verify(personasRepository, times(1)).update(personaTest);
     }
 
     @Test
@@ -157,5 +185,8 @@ class PersonasControllerTest {
 
     @Test
     void backupData() {
+        when(personasStorageTest.backup(List.of(personaTest))).thenReturn(true);
+        personasController.backupData(List.of(personaTest));
+        verify(personasStorageTest, times(1)).backup(List.of(personaTest));
     }
 }
